@@ -1,25 +1,117 @@
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Tweets from './components/Tweets/Tweets';
+import CreateTweet from './components/CreateTweet';
+import Profile from './components/Profile/Profile';
+import Form from './components/Form/Form';
+
+import { Route, Link, withRouter } from 'react-router-dom';
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      user: {
+        id: '123456',
+        username: "MKirby",
+        bio: "This is the bio...",
+        likedTweets: []
+      },
+      tweets: [
+        {
+          timestamp: Date.now(),
+          uuid: "1234567",
+          userId: "MKirby",
+          content: "This is the tweet's contents.",
+          likes: 0
+        }
+      ],
+    }
+  }
+
+  createTweet = (tweet) => {
+
+    tweet.timestamp = Date.now();
+    tweet.uuid = Math.floor(Math.random() * 100000);
+    tweet.userId = "123456";
+    tweet.likes = 0;
+
+    const tweets = this.state.tweets;
+    
+    tweets.push(tweet);
+
+    this.setState({
+      tweets
+    })
+  }
+
+  submitEditProfile = (bio, username) => {
+    const user = this.state.user;
+    user.bio = bio;
+    user.username = username;
+
+    this.setState({
+      user,
+      editProfile: false
+    })
+
+    this.props.history.push("/profile")
+  }
+
+  updateTweet = id => {
+    const tweet = this.state.tweets.map(tweet => {
+      if (tweet.uuid === id) {
+        tweet.likes += 1;
+      } 
+      return tweet;
+    })
+
+    this.setState({
+      tweets: tweet
+    })
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <header>
+          <div>
+            <h1><Link to="/">Project X</Link></h1>
+            <h2>Welcome {this.state.user.username}!</h2>
+          </div>
+          <nav>
+            <ul>
+              <li><Link to="/profile">Profile</Link></li>
+              <li><Link to="/tweets">Tweets</Link></li>
+              <li><Link to="/tweets/add">Add Tweets</Link></li>
+            </ul>
+          </nav>
+        </header>
+        <Route exact path="/profile" render={() => 
+          <Profile 
+            user={this.state.user} 
+            editProfile={this.editProfile}
+          />
+        } />
+        <Route path="/profile/edit" render={() =>
+          <Form 
+            user={this.state.user} 
+            submitEditProfile={this.submitEditProfile} />
+        } />
+        <Route exact path="/tweets" render={() =>
+          <Tweets 
+            tweets={this.state.tweets} 
+            updateTweet={this.updateTweet} 
+          />
+        } />
+        <Route path="/tweets/add" render={() =>
+          <CreateTweet createTweet={this.createTweet} />
+        } />
+      </div>
+    );
+  }
 }
 
-export default App;
+export default withRouter(App);
