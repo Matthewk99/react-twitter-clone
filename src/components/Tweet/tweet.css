@@ -1,0 +1,16 @@
+.tweet-wrapper {
+    border: 1px solid black;
+    padding: 15px;
+    background-color: lemonchiffon;
+    border-radius: 10%;
+    margin: 10px 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tweet-wrapper div {
+    display: flex;
+    width: 50px;
+    justify-content: space-between;
+    align-items: center;
+}

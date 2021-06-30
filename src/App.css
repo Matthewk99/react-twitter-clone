@@ -12,3 +12,23 @@ header {
   align-items: center;
   justify-content: space-between;
 }
+
+header nav ul {
+  display: flex;
+  list-style-type: none;
+  justify-content: space-around;
+  width: 100%;
+}
+
+header nav ul li:hover {
+  text-decoration: underline;
+}
+
+button {
+  padding: 5px;
+  border-radius: 25%;
+}
+
+button:hover {
+  background-color: lightcoral;
+}

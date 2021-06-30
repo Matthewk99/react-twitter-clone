@@ -45,6 +45,8 @@ class App extends Component {
     this.setState({
       tweets
     })
+
+    this.props.history.push("/tweets");
   }
 
   submitEditProfile = (bio, username) => {
@@ -61,15 +63,27 @@ class App extends Component {
   }
 
   updateTweet = id => {
+    const userLikedTweets = this.state.user.likedTweets;
+
     const tweet = this.state.tweets.map(tweet => {
       if (tweet.uuid === id) {
-        tweet.likes += 1;
+        if (this.state.user.likedTweets.includes(id)) {
+          tweet.likes -= 1;
+          userLikedTweets.splice(userLikedTweets.indexOf(id), 1);
+        } else {
+          tweet.likes += 1;
+          userLikedTweets.push(id);
+        }
       } 
       return tweet;
     })
 
+    const user = this.state.user;
+    user.likedTweets = userLikedTweets;
+
     this.setState({
-      tweets: tweet
+      tweet,
+      user
     })
   }
 
@@ -92,7 +106,9 @@ class App extends Component {
         <Route exact path="/profile" render={() => 
           <Profile 
             user={this.state.user} 
+            tweets={this.state.tweets}
             editProfile={this.editProfile}
+            updateTweet={this.updateTweet}
           />
         } />
         <Route path="/profile/edit" render={() =>
